@@ -30,10 +30,10 @@ public class JwtFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         String path = req.getRequestURI();
-        String method = req.getMethod();
 
-        // ✅ Allow auth + preflight
-        if (path.startsWith("/api/auth") || method.equalsIgnoreCase("OPTIONS")) {
+        // ✅ Skip auth + preflight
+        if (path.startsWith("/api/auth") ||
+            req.getMethod().equalsIgnoreCase("OPTIONS")) {
             chain.doFilter(request, response);
             return;
         }
@@ -41,33 +41,31 @@ public class JwtFilter implements Filter {
         String authHeader = req.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            res.sendError(HttpServletResponse.SC_FORBIDDEN, "Missing token");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         String token = authHeader.substring(7);
 
         if (!jwtUtil.validateToken(token)) {
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        // 🔑 EXTRACT DETAILS
         String email = jwtUtil.extractClaims(token).getSubject();
-        String role  = jwtUtil.extractClaims(token).get("role", String.class);
+        String role  = jwtUtil.extractClaims(token)
+                              .get("role", String.class);
 
-        // 🔥 VERY IMPORTANT: ROLE_ prefix
         SimpleGrantedAuthority authority =
-                new SimpleGrantedAuthority("ROLE_" + role);
+            new SimpleGrantedAuthority("ROLE_" + role);
 
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        email,
-                        null,
-                        List.of(authority)
-                );
+            new UsernamePasswordAuthenticationToken(
+                email, null, List.of(authority)
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext()
+                             .setAuthentication(authentication);
 
         chain.doFilter(request, response);
     }

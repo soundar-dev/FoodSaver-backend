@@ -30,53 +30,45 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ IMPORTANT
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-//            .authorizeHttpRequests(auth -> auth
-//            	    .requestMatchers("/api/auth/**", "/error").permitAll()
-//            	    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//
-//            	    // ✅ ADMIN APIs
-//            	    .requestMatchers("/api/surplus/**").hasRole("ADMIN")
-//            	    .requestMatchers("/api/settings/**").hasRole("ADMIN")
-//            	    .requestMatchers("/api/pickup/**").hasRole("ADMIN")
-//            	    
-//            	    // ✅ USER / NGO APIs (THIS WAS MISSING)
-//            	    .requestMatchers("/api/user/**").hasRole("USER")
-//
-//            	    .anyRequest().authenticated()
-//            	)
             .authorizeHttpRequests(auth -> auth
-            	    .requestMatchers("/api/auth/**", "/error").permitAll()
-            	    .requestMatchers("/api/user/**").hasRole("USER")
-            	    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-            	    .anyRequest().authenticated()
-            	)
+                // ✅ Allow login + preflight
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                // ✅ ROLE BASED
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/user/**").hasRole("USER")
 
-
+                .anyRequest().authenticated()
+            )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ✅ REAL CORS CONFIG (SECURITY LEVEL)
+    // ✅ CORS FIXED FOR NETLIFY + JWT
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "http://127.0.0.1:5500",
-                "http://localhost:5500"
+            "http://localhost:5500",
+            "http://127.0.0.1:5500",
+            "https://foodsaver07.netlify.app"
         ));
+
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(false);
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true); // 🔥 REQUIRED FOR JWT
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
         return source;
@@ -93,4 +85,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-	

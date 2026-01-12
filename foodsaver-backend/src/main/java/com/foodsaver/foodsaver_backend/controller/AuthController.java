@@ -18,16 +18,13 @@ public class AuthController {
         this.authService = authService;
     }
 
-    // ✅ LOGIN (UNCHANGED)
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }
 
-    // ✅ LOGOUT (NEW – DOES NOT AFFECT LOGIN)
     @PostMapping("/logout")
     public Map<String, String> logout() {
-        // JWT is stateless → frontend deletes token
         return Map.of("message", "Logged out successfully");
     }
 }

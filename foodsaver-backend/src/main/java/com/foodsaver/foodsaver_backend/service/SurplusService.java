@@ -93,13 +93,20 @@ public class SurplusService {
         surplusRepo.deleteById(id);
     }
 
-    public void acceptSurplus(Long id, String email) {
-        surplusRepo.findById(id).ifPresent(s -> {
-            s.setStatus(Surplus.Status.ACCEPTED);
-            s.setAcceptedBy(email);
-            surplusRepo.save(s);
-        });
-    }
+   public void acceptSurplus(Long id, String email) {
+
+    User user = userRepo.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    surplusRepo.findById(id).ifPresent(s -> {
+        s.setStatus(Surplus.Status.ACCEPTED);
+
+        // ✅ SAVE ORGANIZATION NAME
+        s.setAcceptedBy(user.getOrganizationName());
+
+        surplusRepo.save(s);
+    });
+}
 
     public void updateStatus(Long id, Surplus.Status status) {
         surplusRepo.findById(id).ifPresent(s -> {
@@ -108,3 +115,4 @@ public class SurplusService {
         });
     }
 }
+

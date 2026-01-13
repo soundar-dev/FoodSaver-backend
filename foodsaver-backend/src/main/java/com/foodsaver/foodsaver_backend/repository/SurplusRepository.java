@@ -29,23 +29,21 @@ public interface SurplusRepository extends JpaRepository<Surplus, Long> {
 
     List<Surplus> findByCreatedBy(String createdBy);
 
-    @Query("""
+   @Query("""
         SELECT new com.foodsaver.foodsaver_backend.dto.AdminSurplusCardDTO(
             s.id,
             s.foodName,
             s.location,
             s.quantity,
             s.postedBy,
-            u.organizationName,
+            s.acceptedBy,
             s.expiryHours,
             s.status
         )
         FROM Surplus s
-        LEFT JOIN User u ON u.email = s.acceptedBy
         WHERE s.createdBy = :adminEmail
     """)
     List<AdminSurplusCardDTO> findAllForAdmin(@Param("adminEmail") String adminEmail);
-
     /* ---------- USER / NGO ---------- */
 
     @Query("""
@@ -74,3 +72,4 @@ public interface SurplusRepository extends JpaRepository<Surplus, Long> {
     """)
     long countExpired(@Param("cutoffTime") LocalDateTime cutoffTime);
 }
+

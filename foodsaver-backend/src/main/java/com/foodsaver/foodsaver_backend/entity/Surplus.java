@@ -1,6 +1,7 @@
 package com.foodsaver.foodsaver_backend.entity;
 
 import java.time.LocalDateTime;
+  import java.time.ZoneOffset;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,13 +58,14 @@ public class Surplus {
     }
 
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = Status.AVAILABLE;
-        }
-    }
+
+	@PrePersist
+	protected void onCreate() {
+	    this.createdAt = LocalDateTime.now(ZoneOffset.UTC);
+	    if (this.status == null) {
+	        this.status = Status.AVAILABLE;
+	    }
+	}
 
     public enum Status {
         AVAILABLE,
@@ -102,3 +104,4 @@ public class Surplus {
 	
     
 }
+

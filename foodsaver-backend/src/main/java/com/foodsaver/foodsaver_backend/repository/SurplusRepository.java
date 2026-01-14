@@ -46,11 +46,10 @@ public interface SurplusRepository extends JpaRepository<Surplus, Long> {
     List<AdminSurplusCardDTO> findAllForAdmin(@Param("adminEmail") String adminEmail);
     /* ---------- USER / NGO ---------- */
 
-  @Query("""
+ @Query("""
     SELECT s
     FROM Surplus s
     WHERE s.status IN ('AVAILABLE', 'ACCEPTED')
-      AND FUNCTION('TIMESTAMPADD', HOUR, s.expiryHours, s.createdAt) > CURRENT_TIMESTAMP
 """)
 List<Surplus> findForUsers();
 
@@ -73,6 +72,7 @@ List<Surplus> findForUsers();
     """)
     long countExpired(@Param("cutoffTime") LocalDateTime cutoffTime);
 }
+
 
 
 

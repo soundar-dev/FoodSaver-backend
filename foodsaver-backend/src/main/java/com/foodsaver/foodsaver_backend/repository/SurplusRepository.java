@@ -50,7 +50,7 @@ public interface SurplusRepository extends JpaRepository<Surplus, Long> {
     SELECT s
     FROM Surplus s
     WHERE s.status IN ('AVAILABLE', 'ACCEPTED')
-      AND (s.createdAt + s.expiryHours * 1.0 / 24) > CURRENT_TIMESTAMP
+      AND FUNCTION('DATE_ADD', s.createdAt, s.expiryHours, 'HOUR') > CURRENT_TIMESTAMP
 """)
 List<Surplus> findForUsers();
 
@@ -73,5 +73,6 @@ List<Surplus> findForUsers();
     """)
     long countExpired(@Param("cutoffTime") LocalDateTime cutoffTime);
 }
+
 
 

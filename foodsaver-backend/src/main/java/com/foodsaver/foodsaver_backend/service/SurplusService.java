@@ -83,9 +83,19 @@ public class SurplusService {
     }
 
     /* ---------- USER / NGO ---------- */
-    public List<Surplus> getSurplusForUsers() {
-        return surplusRepo.findForUsers();
-    }
+   public List<Surplus> getSurplusForUsers() {
+
+    LocalDateTime nowUtc = LocalDateTime.now(ZoneOffset.UTC);
+
+    return surplusRepo.findForUsers().stream()
+        .filter(s -> s.getCreatedAt() != null)
+        .filter(s ->
+            s.getCreatedAt()
+             .plusHours(s.getExpiryHours())
+             .isAfter(nowUtc)
+        )
+        .toList();
+}
 
     /* ---------- COMMON ---------- */
 
@@ -115,4 +125,5 @@ public class SurplusService {
         });
     }
 }
+
 

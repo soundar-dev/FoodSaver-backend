@@ -1,7 +1,7 @@
 package com.foodsaver.foodsaver_backend.entity;
 
 import java.time.LocalDateTime;
-  import java.time.ZoneOffset;
+import java.time.ZoneOffset;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -104,4 +104,5 @@ public class Surplus {
 	
     
 }
+
 

@@ -38,7 +38,8 @@ public interface SurplusRepository extends JpaRepository<Surplus, Long> {
             s.postedBy,
             s.acceptedBy,
             s.expiryHours,
-            s.status
+            s.status,
+            s.adminMobile
         )
         FROM Surplus s
         WHERE s.createdBy = :adminEmail
@@ -72,6 +73,7 @@ List<Surplus> findForUsers();
     """)
     long countExpired(@Param("cutoffTime") LocalDateTime cutoffTime);
 }
+
 
 
 

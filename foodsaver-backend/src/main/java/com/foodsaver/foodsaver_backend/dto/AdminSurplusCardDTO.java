@@ -12,6 +12,7 @@ public class AdminSurplusCardDTO {
     private String acceptedByOrg;
     private int expiryHours;
     private Surplus.Status status;
+	private String adminMobile;
 
     public AdminSurplusCardDTO(
         Long id,
@@ -21,7 +22,8 @@ public class AdminSurplusCardDTO {
         String postedBy,
         String acceptedByOrg,
         int expiryHours,
-        Surplus.Status status
+        Surplus.Status status,
+		String adminMobile
     ) {
         this.id = id;
         this.foodName = foodName;
@@ -31,6 +33,7 @@ public class AdminSurplusCardDTO {
         this.acceptedByOrg = acceptedByOrg;
         this.expiryHours = expiryHours;
         this.status = status;
+		this.adminMobile=adminMobile;
     }
 
 	public Long getId() {
@@ -97,7 +100,12 @@ public class AdminSurplusCardDTO {
 		this.status = status;
 	}
 
+	public String getAdminMobile() {
+    return adminMobile;
+}
+
     // getters
     
     
 }
+

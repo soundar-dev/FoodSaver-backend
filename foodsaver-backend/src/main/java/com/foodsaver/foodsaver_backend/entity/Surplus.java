@@ -53,6 +53,17 @@ public class Surplus {
         return postedBy;
     }
 
+	@Column(name = "admin_mobile", nullable = false)
+	private String adminMobile;
+	
+	public String getAdminMobile() {
+	    return adminMobile;
+	}
+	
+	public void setAdminMobile(String adminMobile) {
+	    this.adminMobile = adminMobile;
+	}
+	
     public void setPostedBy(String postedBy) {
         this.postedBy = postedBy;
     }
@@ -104,5 +115,6 @@ public class Surplus {
 	
     
 }
+
 
 
